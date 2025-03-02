@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>README.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="risc-v-spec-core">RISC-V Spec Core</h1>
+<p>This project is a framework for formal verification/testing the consistency
+between a Chisel-designed RISC-V processor and the instruction set
+specification.
+Including a configurable <code>RiscvCore</code> as a reference model to represent the
+semantics of the RISC-V ISA document, as well as several <code>Helper</code> and <code>Checker</code>
+to connect the user's processor design with the reference model and set
+verification conditions.</p>
+<p>Reference model support RV32/64IMC, Zicsr, MSU privilege level,
+virtual-momory system with Sv39.</p>
+<p>Read more detailed Chinese README: <a href="README.zh-CN.md">中文说明</a>.</p>
+<h2 id="table-of-contents----omit-in-toc">Table of Contents <!-- omit in toc --></h2>
+<ul>
+<li><a href="#usage">Usage</a>
+<ul>
+<li><a href="#import-dependency">Import dependency</a></li>
+<li><a href="#add-checker-and-set-basic-instruction-information">Add Checker and Set Basic Instruction Information</a></li>
+<li><a href="#general-register">General Register</a></li>
+<li><a href="#csr-and-exception">CSR and Exception</a></li>
+<li><a href="#tlb">TLB</a></li>
+<li><a href="#memory-access">Memory Access</a></li>
+</ul>
+</li>
+<li><a href="#verification-example">Verification Example</a></li>
+<li><a href="#publications">Publications</a></li>
+</ul>
+<h2 id="usage">Usage</h2>
+<h3 id="import-dependency">Import dependency</h3>
+<p>To use riscv-spec-core as a managed dependency, add this in your <code>build.sbt</code>:</p>
+<pre class="hljs"><code><div>libraryDependencies += <span class="hljs-string">"cn.ac.ios.tis"</span> %% <span class="hljs-string">"riscvspeccore"</span> % <span class="hljs-string">"1.3-SNAPSHOT"</span>
+</div></code></pre>
+<p>Then add verification code in your DUT as the following description.
+Or see the <a href="#verification-example">example</a>.</p>
+<h3 id="add-checker-and-set-basic-instruction-information">Add Checker and Set Basic Instruction Information</h3>
+<p>Instantiation a <code>checker</code>, and set the supportted instruction set of reference
+module at the instruction commit level.</p>
+<pre class="hljs"><code><div><span class="hljs-keyword">val</span> rvConfig = <span class="hljs-type">RVConfig</span>(<span class="hljs-number">64</span>, <span class="hljs-string">"MCS"</span>, <span class="hljs-string">"A"</span>)
+<span class="hljs-keyword">val</span> checker = <span class="hljs-type">Module</span>(<span class="hljs-keyword">new</span> <span class="hljs-type">CheckerWithResult</span>(checkMem = <span class="hljs-literal">true</span>)(rvConfig))
+
+checker.io.instCommit.valid := <span class="hljs-type">XXX</span>
+checker.io.instCommit.inst  := <span class="hljs-type">XXX</span>
+checker.io.instCommit.pc    := <span class="hljs-type">XXX</span>
+
+<span class="hljs-type">ConnectCheckerResult</span>.setChecker(checker)(<span class="hljs-type">XLEN</span>, rvConfig)
+</div></code></pre>
+<h3 id="general-register">General Register</h3>
+<pre class="hljs"><code><div><span class="hljs-keyword">val</span> resultRegWire = <span class="hljs-type">Wire</span>(<span class="hljs-type">Vec</span>(<span class="hljs-number">32</span>, <span class="hljs-type">UInt</span>(<span class="hljs-type">XLEN</span>.<span class="hljs-type">W</span>)))
+resultRegWire := rf
+resultRegWire(<span class="hljs-number">0</span>) := <span class="hljs-number">0.</span><span class="hljs-type">U</span>
+<span class="hljs-type">ConnectCheckerResult</span>.setRegSource(resultRegWire)
+</div></code></pre>
+<h3 id="csr-and-exception">CSR and Exception</h3>
+<pre class="hljs"><code><div><span class="hljs-comment">// CSR</span>
+<span class="hljs-keyword">val</span> resultCSRWire = rvspeccore.checker.<span class="hljs-type">ConnectCheckerResult</span>.makeCSRSource()(<span class="hljs-number">64</span>, rvConfig)
+resultCSRWire.misa      := <span class="hljs-type">RegNext</span>(misa)
+resultCSRWire.mvendorid := <span class="hljs-type">XXX</span>
+resultCSRWire.marchid   := <span class="hljs-type">XXX</span>
+<span class="hljs-comment">// ······</span>
+<span class="hljs-comment">// exception</span>
+<span class="hljs-keyword">val</span> resultEventWire = rvspeccore.checker.<span class="hljs-type">ConnectCheckerResult</span>.makeEventSource()(<span class="hljs-number">64</span>, rvConfig)
+resultEventWire.valid := <span class="hljs-type">XXX</span>
+resultEventWire.intrNO := <span class="hljs-type">XXX</span>
+resultEventWire.cause := <span class="hljs-type">XXX</span>
+resultEventWire.exceptionPC := <span class="hljs-type">XXX</span>
+resultEventWire.exceptionInst := <span class="hljs-type">XXX</span>
+<span class="hljs-comment">// ······</span>
+</div></code></pre>
+<h3 id="tlb">TLB</h3>
+<p>Get signals in TLB of DUT.</p>
+<pre class="hljs"><code><div><span class="hljs-keyword">val</span> resultTLBWire = rvspeccore.checker.<span class="hljs-type">ConnectCheckerResult</span>.makeTLBSource(<span class="hljs-keyword">if</span>(tlbname == <span class="hljs-string">"itlb"</span>) <span class="hljs-literal">false</span> <span class="hljs-keyword">else</span> <span class="hljs-literal">true</span>)(<span class="hljs-number">64</span>)
+<span class="hljs-comment">// memory access in TLB</span>
+resultTLBWire.read.valid := <span class="hljs-literal">true</span>.<span class="hljs-type">B</span>
+resultTLBWire.read.addr  := io.mem.req.bits.addr
+resultTLBWire.read.data  := io.mem.resp.bits.rdata
+resultTLBWire.read.level := (level<span class="hljs-number">-1.</span><span class="hljs-type">U</span>)
+<span class="hljs-comment">// ······</span>
+</div></code></pre>
+<h3 id="memory-access">Memory Access</h3>
+<p>Get the signal when DUT access memory.</p>
+<pre class="hljs"><code><div><span class="hljs-keyword">val</span> mem = rvspeccore.checker.<span class="hljs-type">ConnectCheckerResult</span>.makeMemSource()(<span class="hljs-number">64</span>)
+when(backend.io.dmem.resp.fire) {
+    <span class="hljs-comment">// load or store complete</span>
+    when(isRead) {
+        isRead       := <span class="hljs-literal">false</span>.<span class="hljs-type">B</span>
+        mem.read.valid := <span class="hljs-literal">true</span>.<span class="hljs-type">B</span>
+        mem.read.addr  := <span class="hljs-type">SignExt</span>(addr, <span class="hljs-number">64</span>)
+        mem.read.data  := backend.io.dmem.resp.bits.rdata
+        mem.read.memWidth := width
+    }.elsewhen(isWrite) {
+        isWrite       := <span class="hljs-literal">false</span>.<span class="hljs-type">B</span>
+        mem.write.valid := <span class="hljs-literal">true</span>.<span class="hljs-type">B</span>
+        mem.write.addr  := <span class="hljs-type">SignExt</span>(addr, <span class="hljs-number">64</span>)
+        mem.write.data  := wdata
+        mem.write.memWidth := width
+        <span class="hljs-comment">// pass addr wdata wmask</span>
+    }.otherwise {
+        <span class="hljs-comment">// assert(false.B)</span>
+        <span class="hljs-comment">// may receive some acceptable error resp, but microstructure can handle</span>
+    }
+}
+</div></code></pre>
+<h2 id="verification-example">Verification Example</h2>
+<p><a href="https://github.com/iscas-tis/nutshell-fv">nutshell-fv</a><br>
+In this example of processor design, we modified the code to get a verifiable
+system with reference model.
+And then perform formal verification using BMC through ChiselTest.</p>
+<h2 id="publications">Publications</h2>
+<p>If our work has been helpful to you, please cite:</p>
+<p><strong>SETTA 2024: Formal Verification of RISC-V Processor Chisel Designs</strong> <a href="https://link.springer.com/chapter/10.1007/978-981-96-0602-3_8">Link</a> | <a href="https://citation-needed.springer.com/v2/references/10.1007/978-981-96-0602-3_8?format=bibtex&amp;flavour=citation">BibTex</a></p>
+<p>sbt compile
+sbt clean compile
+sbt &quot;runMain rvspeccore.interface_app&quot;
+发现一个史上最傻逼的事情：在错误的目录运行代码导致项目跑不通
+这里推荐有sbt的地方的所在文件夹作为项目的根目录，否则会寄了，哎真是逆天</p>
+<p>有时候不得不觉得这写的代码是shit
+居然不设计顶层模块，直接偷懒</p>
+<p>必须在metals中打开导入配置，尽量不要在多个项目中使用metals跳转，否则会崩溃；</p>
+<p>考虑的几个问题：
+1.尽量少对原始形式化验证代码做修改
+2.如果有的CPU缺少这方面的形式化验证，或者不支持部分指令，是报错还是warning? 所以统一的写法要改变
+3.使用blackbox把veirlog进行封装，这是最简单的办法</p>
+
+</body>
+</html>
