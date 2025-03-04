@@ -160,3 +160,19 @@ sbt "runMain rvspeccore.interface_app"
 2.考虑参数传递的问题，如何在参考模型中体现
 3.如何接参考模型的测试信号hex文件等
 4.找一个参考模型然后运行下看能不能接上去
+
+
+在ssh服务器上配置公钥：
+ssh-keygen -t rsa -b 4096 -C "1824161941@qq.com"
+eval "$(ssh-agent -s)"
+ls ~/.ssh
+ssh-add -l
+cat ~/.ssh/id_rsa.pub
+copy
+ssh -T git@github.com
+git remote -v
+git remote set-url origin git@github.com:l1x2h3/rvspeccore_verilog.git
+git remote -v
+git add .
+git commit -m xxx
+git push
