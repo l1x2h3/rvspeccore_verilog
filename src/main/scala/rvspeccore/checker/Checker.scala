@@ -312,18 +312,37 @@ import chisel3._
 import chisel3.stage.ChiselStage
 
 object Main extends App {
-  // 使用 RVConfig 的 apply 方法创建配置
+  //使用 RVConfig 的 apply 方法创建配置
   implicit val config: RVConfig = RVConfig(
-    XLEN = 64, // 直接传递 XLEN
-    extensions = Seq("I", "M", "C"), // 根据需求传递扩展
-    fakeExtensions = Seq.empty, // 不需要 fakeExtensions
-    initValue = Map("pc" -> "h80000000"), // 初始化值
-    functions = Seq("Privileged"), // 启用特权模式
-    formal = Seq.empty // 不需要 formal 配置
+    // XLEN = 64, // 直接传递 XLEN
+    // extensions = Seq("I", "M", "C"), // 根据需求传递扩展
+    // fakeExtensions = Seq.empty, // 不需要 fakeExtensions
+    // initValue = Map("pc" -> "h80000000"), // 初始化值
+    // functions = Seq("Privileged"), // 启用特权模式
+    // formal = Seq.empty // 不需要 formal 配置
+        XLEN = 64,
+        extensions = "MCZicsrU",
+        fakeExtensions = "A",
+        initValue = Map("pc" -> "h00008000"),
+        functions = Seq(
+          "Privileged",
+          "TLB"
+      )
   )
 
+  // implicit val RVConfig = RVConfig(
+  //   XLEN = 64,
+  //   extensions = "MCZicsrU",
+  //   fakeExtensions = "A",
+  //   initValue = Map("pc" -> "h0000_8000")
+  //   functions = Seq(
+  //     "Privileged",
+  //     "TLB"
+  //   )
+  // )
+
   // 生成 Verilog 代码
-  (new ChiselStage).emitVerilog(new CheckerWithResult(checkMem = true, enableReg = false), Array("--target-dir", "generated"))
+  (new ChiselStage).emitVerilog(new CheckerWithResult(checkMem = true, enableReg = false), Array("--target-dir", "generated_full_para"))
 }
 // trait RVConfig {
 //   val XLEN: Int
