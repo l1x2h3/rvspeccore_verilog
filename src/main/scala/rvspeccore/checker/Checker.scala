@@ -49,6 +49,31 @@ class QueueModuleTLB(implicit XLEN: Int) extends Module {
   io.out <> queue
 }
 
+/** RVFI_IO: RISC-V Formal Interface Bundle
+  * Defines the output signals required for RISC-V Formal Verification Interface (RVFI).
+  */
+class RVFI_IO extends Bundle {
+  // Instruction-related signals
+  val valid     = Output(Bool())          // Indicates if the instruction is valid and committed
+  val insn      = Output(UInt(32.W))      // The 32-bit instruction being executed
+  val pc_rdata  = Output(UInt(64.W))      // Current Program Counter (PC) value
+  val pc_wdata  = Output(UInt(64.W))      // Next PC value after instruction execution
+
+  // Register-related signals
+  val rs1_addr  = Output(UInt(5.W))       // Source register 1 address (5-bit index)
+  val rs2_addr  = Output(UInt(5.W))       // Source register 2 address (5-bit index)
+  val rs1_rdata = Output(UInt(64.W))      // Source register 1 read data (64-bit value)
+  val rs2_rdata = Output(UInt(64.W))      // Source register 2 read data (64-bit value)
+  val rd_addr   = Output(UInt(5.W))       // Destination register address (5-bit index)
+  val rd_wdata  = Output(UInt(64.W))      // Destination register write data (64-bit value)
+  val regs      = Vec(32, Output(UInt(64.W))) // Entire register file state (32 x 64-bit)
+
+  // Memory-related signals
+  val mem_addr  = Output(UInt(32.W))      // Memory access address (32-bit)
+  val mem_rdata = Output(UInt(64.W))      // Memory read data (64-bit)
+  val mem_wdata = Output(UInt(64.W))      // Memory write data (64-bit)
+}
+
 /** Checker with result port.
   *
   * Check pc of commited instruction and next value of all register. Although
@@ -69,6 +94,8 @@ class CheckerWithResult(val checkMem: Boolean = true, enableReg: Boolean = false
       val mem        = if (checkMem) Some(Input(new MemIO)) else None
       val dtlbmem    = if (checkMem && config.functions.tlb) Some(Input(new TLBSig)) else None
       val itlbmem    = if (checkMem && config.functions.tlb) Some(Input(new TLBSig)) else None
+
+      //val rvfi       = Output(new RVFI_IO())
     })
 
   // TODO: io.result has .internal states now, consider use it or not
@@ -218,22 +245,23 @@ class CheckerWithResult(val checkMem: Boolean = true, enableReg: Boolean = false
     assert(regDelay(io.event.exceptionPC) === regDelay(specCore.io.event.exceptionPC))
     assert(regDelay(io.event.exceptionInst) === regDelay(specCore.io.event.exceptionInst))
   }
-}
-//test1 finished!
 
-// class CheckerWithResult_new(val checkMem: Boolean = true, enableReg: Boolean = false)(implicit config: RVConfig)
-//     extends Checker {
-//     val io = IO(new Bundle {
-//     val coreInterface = Flipped(new CoreInterface) // 适配 CoreInterface\
-//     // 处理核心逻辑
-//     when(io.coreInterface.valid) {
-//       // 假设 Checker 需要对输入数据进行某种检查后再输出
-//       io.coreInterface.ready := true.B
-//     }.otherwise {
-//       io.coreInterface.ready := false.B
-//     }
-//   })
-//   }
+  // io.rvfi.valid      := regDelay(io.instCommit.valid)  // 指令提交有效性
+  // io.rvfi.insn       := regDelay(io.instCommit.inst)   // 当前指令
+  // io.rvfi.pc_rdata   := regDelay(io.instCommit.pc)     // 当前 PC
+  // io.rvfi.pc_wdata   := regDelay(specCore.io.next.pc)  // 下一条指令的 PC
+  // io.rvfi.rs1_addr   := io.instCommit.inst(19, 15)     // 源寄存器 1 地址（从指令中提取）
+  // io.rvfi.rs2_addr   := io.instCommit.inst(24, 20)     // 源寄存器 2 地址（从指令中提取）
+  // io.rvfi.rs1_rdata  := regDelay(specCore.io.now.reg(io.rvfi.rs1_addr))  // 源寄存器 1 数据
+  // io.rvfi.rs2_rdata  := regDelay(specCore.io.now.reg(io.rvfi.rs2_addr))  // 源寄存器 2 数据
+  // io.rvfi.rd_addr    := io.instCommit.inst(11, 7)      // 目标寄存器地址（从指令中提取）
+  // io.rvfi.rd_wdata   := regDelay(specCore.io.next.reg(io.rvfi.rd_addr))  // 目标寄存器写入数据
+  // io.rvfi.mem_addr   := regDelay(if (checkMem) io.mem.get.read.addr else 0.U(32.W))  // 内存访问地址
+  // io.rvfi.mem_rdata  := regDelay(if (checkMem) io.mem.get.read.data else 0.U(64.W))  // 内存读取数据
+  // io.rvfi.mem_wdata  := regDelay(if (checkMem) io.mem.get.write.data else 0.U(64.W)) // 内存写入数据
+  // io.rvfi.regs       := VecInit((0 until 32).map(i => regDelay(specCore.io.next.reg(i.U)))) // 寄存器堆状态
+}
+
 
 class WriteBack()(implicit XLEN: Int) extends Bundle {
   val valid = Bool()
@@ -308,60 +336,62 @@ class CheckerWithWB(checkMem: Boolean = true)(implicit config: RVConfig) extends
 }
 
 
+
 import chisel3._
 import chisel3.stage.ChiselStage
+import chisel3.util._
+
+class CheckerWrapper(val checkMem: Boolean = true, enableReg: Boolean = false)(implicit config: RVConfig) extends Module {
+  val io = IO(new Bundle {
+    implicit val XLEN: Int = config.XLEN
+    val instCommit = Input(InstCommit())
+    val result     = Input(State())
+    val event      = Input(new EventSig())
+    val mem        = if (checkMem) Some(Input(new MemIO)) else None
+    val dtlbmem    = if (checkMem && config.functions.tlb) Some(Input(new TLBSig)) else None
+    val itlbmem    = if (checkMem && config.functions.tlb) Some(Input(new TLBSig)) else None
+    // 添加 RVFI_IO 输出接口
+    //val rvfi       = Output(new RVFI_IO())
+  })
+
+  // 实例化 CheckerWithResult
+  val checker = Module(new CheckerWithResult(checkMem, enableReg))
+  
+  // 连接输入信号
+  checker.io.instCommit := io.instCommit
+  checker.io.result     := io.result
+  checker.io.event      := io.event
+  
+  if (checkMem) {
+    checker.io.mem.get := io.mem.get
+    if (config.functions.tlb) {
+      checker.io.dtlbmem.get := io.dtlbmem.get
+      checker.io.itlbmem.get := io.itlbmem.get
+    }
+  }
+
+  // 假设 CheckerWithResult 提供 RVFI 信号，将其连接到 io.rvfi
+  // 如果 CheckerWithResult 没有直接提供 RVFI_IO，你需要手动映射信号
+  //io.rvfi := checker.io.rvfi  // 需要确保 checker 模块有 rvfi 输出
+}
+
 
 object Main extends App {
-  //使用 RVConfig 的 apply 方法创建配置
+  // 使用 RVConfig 的 apply 方法创建配置
   implicit val config: RVConfig = RVConfig(
-    // XLEN = 64, // 直接传递 XLEN
-    // extensions = Seq("I", "M", "C"), // 根据需求传递扩展
-    // fakeExtensions = Seq.empty, // 不需要 fakeExtensions
-    // initValue = Map("pc" -> "h80000000"), // 初始化值
-    // functions = Seq("Privileged"), // 启用特权模式
-    // formal = Seq.empty // 不需要 formal 配置
-        XLEN = 64,
-        extensions = "MCZicsrU",
-        fakeExtensions = "A",
-        initValue = Map("pc" -> "h00008000"),
-        functions = Seq(
-          "Privileged",
-          "TLB"
-      )
+    XLEN = 64,
+    extensions = "MCZicsrU",
+    fakeExtensions = "A",
+    initValue = Map("pc" -> "h00008000"),
+    functions = Seq(
+      "Privileged",
+      "TLB"
+    )
   )
 
-  // implicit val RVConfig = RVConfig(
-  //   XLEN = 64,
-  //   extensions = "MCZicsrU",
-  //   fakeExtensions = "A",
-  //   initValue = Map("pc" -> "h0000_8000")
-  //   functions = Seq(
-  //     "Privileged",
-  //     "TLB"
-  //   )
-  // )
-
   // 生成 Verilog 代码
-  (new ChiselStage).emitVerilog(new CheckerWithResult(checkMem = true, enableReg = false), Array("--target-dir", "generated_full_para"))
+  (new ChiselStage).emitSystemVerilog(
+    new CheckerWrapper(checkMem = true, enableReg = false),
+    Array("--target-dir", "generated_full_para", "--no-dce")
+  )
 }
-// trait RVConfig {
-//   val XLEN: Int
-//   val functions: RVFunctions
-// }
-
-// trait RVFunctions {
-//   val tlb: Boolean
-// }
-
-// object CheckerWithResult extends App {
-//   // 定义隐式 config
-//   implicit val config: RVConfig = new RVConfig {
-//     val XLEN: Int = 64
-//     val functions: RVFunctions = new RVFunctions {
-//       val tlb: Boolean = true
-//     }
-//   }
-
-//   // 生成 Verilog
-//   (new chisel3.stage.ChiselStage).emitVerilog(new CheckerWithResult, Array("--target-dir", "generated"))
-// }

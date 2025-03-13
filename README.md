@@ -190,3 +190,72 @@ git push
 3.信号的参数化问题：表面上看似接口写完了，但是每改一个参数，对应接口都会变
 有两种处理思路：一个是要求DUT提供一个参数信息进行编译
 另一个是直接实现完备的参数信号差，对于未知或用不上的信号用 ` _ , bx, .* `进行传递
+
+verilator -Wall --cc top.sv --exe top_tb.cpp -Wno-lint
+
+其实挺晕的，到最后还是用sby来做形式化验证，那这样就容易处理多了
+看一参考TOP的整理处理框架
+```verilog
+module top (
+    input  logic [7:0] a,
+    input  logic [7:0] b,
+    input  logic       clk
+);
+    logic [7:0] dut_sum, ref_sum;
+
+    // 实例化 DUT
+    dut dut_inst (
+        .a(a),
+        .b(b),
+        .sum(dut_sum)
+    );
+
+    // 实例化参考模型
+    reference_model ref_inst (
+        .a(a),
+        .b(b),
+        .sum(ref_sum)
+    );
+
+    // 实例化 Checker
+    checker checker_inst (
+        .dut_sum(dut_sum),
+        .ref_sum(ref_sum)
+    );
+endmodule
+```
+
+#### 以及SBY脚本
+
+```sby
+[options]
+mode bmc  # 使用有界模型检查
+depth 10  # 设置验证深度为 10 个时钟周期
+
+[engines]
+smtbmc    # 使用 SMT-based 模型检查引擎
+
+[script]
+read_verilog -sv dut.sv           # 读取 DUT
+read_verilog -sv reference_model.sv  # 读取参考模型
+read_verilog -sv checker.sv       # 读取 Checker
+read_verilog -sv top.sv           # 读取顶层模块
+prep -top top                     # 设置顶层模块为 top
+
+[files]
+dut.sv
+reference_model.sv
+checker.sv
+top.sv
+```
+
+最后执行命令
+`sby -f checker.sby`
+
+目前已完成的过程：
+checker
+参考模型
+接下来的目标就是让DUT保持一致
+
+
+sbt "runMain rvspeccore.checker.Main --assert"
